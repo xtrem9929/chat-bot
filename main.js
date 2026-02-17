@@ -59,6 +59,7 @@ function addMessage(text, sender) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
     
     return id; // Retornamos el ID para saber cuál editar luego
+    chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
 }
 
 function handleKeyPress(e) {
