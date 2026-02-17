@@ -7,25 +7,39 @@ function handleKeyPress(e) {
     if (e.key === 'Enter') sendMessage();
 }
 
+// Esta función es la que se activa cuando el usuario hace clic en "Enviar"
 async function sendMessage() {
     const input = document.getElementById('user-input');
     const message = input.value.trim();
+    
     if (!message) return;
 
-    // Mostrar mensaje del usuario
+    // 1. Mostrar el mensaje del usuario en la burbuja de chat
     addMessage(message, 'user');
     input.value = '';
 
-    // Mostrar "Escribiendo..."
-    const loadingId = addMessage('...', 'bot');
+    // 2. Mostrar un mensaje temporal de "Pensando..."
+    const loadingId = addMessage('Escribiendo...', 'bot');
 
-    // AQUÍ CONECTAREMOS LA IA LUEGO
-    // Por ahora simulamos una respuesta fluida
-    setTimeout(() => {
-        updateMessage(loadingId, "¡Entendido! Estoy procesando tu solicitud de forma fluida.");
-    }, 1000);
+    try {
+        // 3. LLAMADA MÁGICA: Aquí llamamos a tu función de Vercel
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: message })
+        });
+
+        const data = await response.json();
+
+        // 4. Reemplazar "Escribiendo..." con la respuesta real de la IA
+        updateMessage(loadingId, data.reply);
+
+    } catch (error) {
+        updateMessage(loadingId, "Ups, algo salió mal. Inténtalo de nuevo.");
+    }
 }
 
+// Funciones auxiliares (asegúrate de tenerlas)
 function addMessage(text, sender) {
     const chatMessages = document.getElementById('chat-messages');
     const div = document.createElement('div');
@@ -39,5 +53,12 @@ function addMessage(text, sender) {
 }
 
 function updateMessage(id, newText) {
-    document.getElementById(id).innerText = newText;
+    const msgElement = document.getElementById(id);
+    if (msgElement) msgElement.innerText = newText;
+}
+
+// Función para abrir/cerrar el chat
+function toggleChat() {
+    const container = document.getElementById('chat-container');
+    container.classList.toggle('chat-hidden');
 }
