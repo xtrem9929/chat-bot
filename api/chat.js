@@ -1,15 +1,12 @@
 export default async function handler(req, res) {
-    if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
+    if (req.method !== 'POST') return res.status(405).end();
 
     const { message } = req.body;
 
-    // --- CONFIGURACIÓN DE TU INFORMACIÓN ---
     const informacionDeLaPagina = `
-        Aquí pon toda la información de tu web:
-        - Nombre: Mant-enimiento
-        - Qué haces: servicio de arreglo de celulares, servicios de todo tipo 
-        - Contacto: juanito@mameluco.com
-        - Horarios: [Si aplica]
+        Nombre: Mant-enimiento.
+        Servicios: Arreglo de celulares y servicios técnicos de todo tipo.
+        Contacto: juanito@mameluco.com.
     `;
 
     try {
@@ -24,25 +21,17 @@ export default async function handler(req, res) {
                 messages: [
                     { 
                         role: "system", 
-                        content: `Eres un asistente virtual estricto. 
-                        Solo puedes responder dudas usando esta información: ${informacionDeLaPagina}.
-                        Si preguntan algo fuera de tema, di: "Lo siento, solo puedo responder dudas sobre este sitio web".
-                        Sé amable, breve y responde en español.` 
+                        content: `Eres el asistente de Mant-enimiento. Solo responde sobre: ${informacionDeLaPagina}. Si preguntan otra cosa, di que no puedes ayudar con eso.` 
                     },
                     { role: "user", content: message }
                 ],
-                temperature: 0.1, // Menos creatividad, más precisión
-                max_tokens: 300
+                temperature: 0.1
             })
         });
 
         const data = await response.json();
-        
-        if (data.error) throw new Error(data.error.message);
-
         res.status(200).json({ reply: data.choices[0].message.content });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ reply: "Error al conectar con la IA. Intenta más tarde." });
+        res.status(500).json({ reply: "Error de conexión." });
     }
 }

@@ -1,21 +1,21 @@
-// Función para abrir/cerrar
+// Abrir y cerrar el chat
 function toggleChat() {
     const container = document.getElementById('chat-container');
     container.classList.toggle('chat-hidden');
 }
 
-// Función para enviar mensajes
+// Enviar mensaje
 async function sendMessage() {
     const input = document.getElementById('user-input');
     const message = input.value.trim();
     
     if (!message) return;
 
-    // 1. Mostrar mensaje del usuario
+    // 1. Añadimos el mensaje del usuario (este NO se toca más)
     addMessage(message, 'user');
     input.value = '';
 
-    // 2. Crear burbuja de "Escribiendo..." y guardar su ID
+    // 2. Creamos la burbuja del bot con "Escribiendo..." y guardamos SU ID específico
     const botMsgId = addMessage('Escribiendo...', 'bot');
 
     try {
@@ -27,36 +27,40 @@ async function sendMessage() {
 
         const data = await response.json();
         
-        // 3. Reemplazar "Escribiendo..." por la respuesta real
-        updateMessage(botMsgId, data.reply);
+        // 3. ACTUALIZACIÓN CRÍTICA: Buscamos SOLO la burbuja de "Escribiendo..." por su ID
+        const botBubble = document.getElementById(botMsgId);
+        if (botBubble) {
+            botBubble.innerText = data.reply;
+        }
 
     } catch (error) {
-        updateMessage(botMsgId, "Lo siento, hubo un error de conexión.");
+        const botBubble = document.getElementById(botMsgId);
+        if (botBubble) {
+            botBubble.innerText = "Lo siento, hubo un error de conexión.";
+        }
     }
 }
 
-// Auxiliar: Añadir mensajes al contenedor
+// Función para añadir mensajes (Crea elementos nuevos siempre)
 function addMessage(text, sender) {
     const chatMessages = document.getElementById('chat-messages');
+    
+    // Creamos el contenedor del mensaje
     const div = document.createElement('div');
-    const id = "msg-" + Date.now(); // ID único
+    const id = "msg-" + Math.random().toString(36).substr(2, 9); // ID aleatorio único
     
     div.id = id;
     div.className = `message ${sender}`;
     div.innerText = text;
     
     chatMessages.appendChild(div);
+    
+    // Scroll automático al último mensaje
     chatMessages.scrollTop = chatMessages.scrollHeight;
-    return id;
+    
+    return id; // Retornamos el ID para saber cuál editar luego
 }
 
-// Auxiliar: Actualizar un mensaje específico
-function updateMessage(id, newText) {
-    const msgElement = document.getElementById(id);
-    if (msgElement) msgElement.innerText = newText;
-}
-
-// Permitir enviar con la tecla Enter
 function handleKeyPress(e) {
     if (e.key === 'Enter') sendMessage();
 }

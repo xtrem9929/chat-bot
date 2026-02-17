@@ -1,32 +1,97 @@
-/* Contenedor principal de mensajes */
+/* Botón flotante circular */
+#chat-widget-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #007bff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 1000;
+}
+
+/* Contenedor del Chat */
+#chat-container {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 350px;
+    height: 450px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.chat-hidden {
+    display: none !important;
+}
+
+/* Área de mensajes con Flexbox */
 #chat-messages {
     flex: 1;
     padding: 15px;
     overflow-y: auto;
     display: flex;
-    flex-direction: column; /* Mensajes uno debajo de otro */
+    flex-direction: column;
     gap: 10px;
+    background-color: #f9f9f9;
 }
 
-/* Estilo de las burbujas */
+/* Burbujas */
 .message {
-    padding: 10px 15px;
-    border-radius: 15px;
-    max-width: 80%;
-    word-wrap: break-word;
-    font-family: sans-serif;
+    padding: 10px 14px;
+    border-radius: 18px;
+    max-width: 75%;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
 }
 
 .user {
-    align-self: flex-end; /* A la derecha */
-    background: #007bff;
+    align-self: flex-end; /* Usuario a la derecha */
+    background-color: #007bff;
     color: white;
+    border-bottom-right-radius: 2px;
 }
 
 .bot {
-    align-self: flex-start; /* A la izquierda */
-    background: #f1f1f1;
+    align-self: flex-start; /* Bot a la izquierda */
+    background-color: #e9e9eb;
     color: #333;
+    border-bottom-left-radius: 2px;
 }
 
-.chat-hidden { display: none !important; }
+/* Input y Botón */
+.chat-input-area {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+}
+
+#user-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 8px;
+}
+
+.chat-header {
+    background: #007bff;
+    color: white;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
