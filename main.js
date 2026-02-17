@@ -1,28 +1,24 @@
+// Función para abrir/cerrar
 function toggleChat() {
     const container = document.getElementById('chat-container');
     container.classList.toggle('chat-hidden');
 }
 
-function handleKeyPress(e) {
-    if (e.key === 'Enter') sendMessage();
-}
-
-// Esta función es la que se activa cuando el usuario hace clic en "Enviar"
+// Función para enviar mensajes
 async function sendMessage() {
     const input = document.getElementById('user-input');
     const message = input.value.trim();
     
     if (!message) return;
 
-    // 1. Mostrar el mensaje del usuario en la burbuja de chat
+    // 1. Mostrar mensaje del usuario
     addMessage(message, 'user');
     input.value = '';
 
-    // 2. Mostrar un mensaje temporal de "Pensando..."
-    const loadingId = addMessage('Escribiendo...', 'bot');
+    // 2. Crear burbuja de "Escribiendo..." y guardar su ID
+    const botMsgId = addMessage('Escribiendo...', 'bot');
 
     try {
-        // 3. LLAMADA MÁGICA: Aquí llamamos a tu función de Vercel
         const response = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -30,41 +26,37 @@ async function sendMessage() {
         });
 
         const data = await response.json();
-
-        // 4. Reemplazar "Escribiendo..." con la respuesta real de la IA
-        const botBubble = document.getElementById(botMsgId);
-        if (botBubble) {
-            botBubble.innerText = data.reply;
-        }
+        
+        // 3. Reemplazar "Escribiendo..." por la respuesta real
+        updateMessage(botMsgId, data.reply);
 
     } catch (error) {
-        const botBubble = document.getElementById(botMsgId);
-        if (botBubble) {
-            botBubble.innerText = "Lo siento, hubo un error.";
-        }
+        updateMessage(botMsgId, "Lo siento, hubo un error de conexión.");
     }
 }
 
-// Funciones auxiliares (asegúrate de tenerlas)
+// Auxiliar: Añadir mensajes al contenedor
 function addMessage(text, sender) {
     const chatMessages = document.getElementById('chat-messages');
     const div = document.createElement('div');
-    const id = "msg-" + Date.now();
+    const id = "msg-" + Date.now(); // ID único
+    
     div.id = id;
     div.className = `message ${sender}`;
     div.innerText = text;
+    
     chatMessages.appendChild(div);
     chatMessages.scrollTop = chatMessages.scrollHeight;
     return id;
 }
 
+// Auxiliar: Actualizar un mensaje específico
 function updateMessage(id, newText) {
     const msgElement = document.getElementById(id);
     if (msgElement) msgElement.innerText = newText;
 }
 
-// Función para abrir/cerrar el chat
-function toggleChat() {
-    const container = document.getElementById('chat-container');
-    container.classList.toggle('chat-hidden');
+// Permitir enviar con la tecla Enter
+function handleKeyPress(e) {
+    if (e.key === 'Enter') sendMessage();
 }

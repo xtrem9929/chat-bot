@@ -7,20 +7,16 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="chat-widget-button" onclick="toggleChat()">
-    <span>💬</span>
-</div>
+    <div id="chat-widget-button" onclick="toggleChat()">💬</div>
 
 <div id="chat-container" class="chat-hidden">
     <div class="chat-header">
-        <p>Asistente IA</p>
+        <span>Asistente IA</span>
         <button onclick="toggleChat()">✕</button>
     </div>
-    <div id="chat-messages">
-        <div class="message bot">¡Hola! ¿En qué puedo ayudarte hoy?</div>
-    </div>
+    <div id="chat-messages"></div>
     <div class="chat-input-area">
-        <input type="text" id="user-input" placeholder="Escribe un mensaje..." onkeypress="handleKeyPress(event)">
+        <input type="text" id="user-input" placeholder="Escribe aquí..." onkeypress="handleKeyPress(event)">
         <button onclick="sendMessage()">Enviar</button>
     </div>
 </div>
