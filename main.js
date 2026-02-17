@@ -1,3 +1,11 @@
+function toggleChat() {
+    const container = document.getElementById('chat-container');
+    if (container) {
+        container.classList.toggle('chat-hidden');
+    } else {
+        console.error("No se encontró el elemento con ID 'chat-container'");
+    }
+}
 // Variable global para guardar la conversación (Memoria)
 let chatHistory = [];
 
