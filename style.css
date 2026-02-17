@@ -1,3 +1,4 @@
+/* Botón flotante Estático */
 #chat-widget-button {
     position: fixed; bottom: 20px; right: 20px;
     width: 60px; height: 60px;
@@ -5,13 +6,7 @@
     display: flex; align-items: center; justify-content: center;
     color: white; font-size: 30px; cursor: pointer;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1000;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,123,255,0.7); }
-    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(0,123,255,0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,123,255,0); }
+    /* Animación pulse eliminada */
 }
 
 #chat-container {
@@ -31,15 +26,13 @@
     background: #f8f9fa; scroll-behavior: smooth;
 }
 
+/* Mejora en la visualización del texto */
 .message {
     padding: 10px 15px; border-radius: 15px;
-    max-width: 80%; font-family: sans-serif; font-size: 14px;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    max-width: 85%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    font-size: 14px; line-height: 1.5; /* Espaciado entre líneas */
+    white-space: pre-wrap; /* Mantiene saltos de línea y evita amontonamiento */
+    word-wrap: break-word;
 }
 
 .user { align-self: flex-end; background: #007bff; color: white; border-bottom-right-radius: 2px; }
