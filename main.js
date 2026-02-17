@@ -32,10 +32,16 @@ async function sendMessage() {
         const data = await response.json();
 
         // 4. Reemplazar "Escribiendo..." con la respuesta real de la IA
-        updateMessage(loadingId, data.reply);
+        const botBubble = document.getElementById(botMsgId);
+        if (botBubble) {
+            botBubble.innerText = data.reply;
+        }
 
     } catch (error) {
-        updateMessage(loadingId, "Ups, algo salió mal. Inténtalo de nuevo.");
+        const botBubble = document.getElementById(botMsgId);
+        if (botBubble) {
+            botBubble.innerText = "Lo siento, hubo un error.";
+        }
     }
 }
 
@@ -43,7 +49,7 @@ async function sendMessage() {
 function addMessage(text, sender) {
     const chatMessages = document.getElementById('chat-messages');
     const div = document.createElement('div');
-    const id = Date.now();
+    const id = "msg-" + Date.now();
     div.id = id;
     div.className = `message ${sender}`;
     div.innerText = text;
