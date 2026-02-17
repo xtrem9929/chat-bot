@@ -1,67 +1,64 @@
-// Abrir y cerrar el chat
 function toggleChat() {
-    const container = document.getElementById('chat-container');
-    container.classList.toggle('chat-hidden');
+    document.getElementById('chat-container').classList.toggle('chat-hidden');
 }
 
-// Enviar mensaje
+// Efecto de escribir letra por letra
+function typeWriter(id, text) {
+    const el = document.getElementById(id);
+    let i = 0;
+    el.innerText = "";
+    function type() {
+        if (i < text.length) {
+            el.innerText += text.charAt(i);
+            i++;
+            const container = document.getElementById('chat-messages');
+            container.scrollTop = container.scrollHeight;
+            setTimeout(type, 15); // Velocidad
+        }
+    }
+    type();
+}
+
 async function sendMessage() {
     const input = document.getElementById('user-input');
-    const message = input.value.trim();
-    
-    if (!message) return;
+    const msg = input.value.trim();
+    if (!msg) return;
 
-    // 1. Añadimos el mensaje del usuario (este NO se toca más)
-    addMessage(message, 'user');
+    addMessage(msg, 'user');
     input.value = '';
-
-    // 2. Creamos la burbuja del bot con "Escribiendo..." y guardamos SU ID específico
-    const botMsgId = addMessage('Escribiendo...', 'bot');
+    const botId = addMessage('...', 'bot');
 
     try {
-        const response = await fetch('/api/chat', {
+        const res = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: message })
+            body: JSON.stringify({ message: msg })
         });
-
-        const data = await response.json();
-        
-        // 3. ACTUALIZACIÓN CRÍTICA: Buscamos SOLO la burbuja de "Escribiendo..." por su ID
-        const botBubble = document.getElementById(botMsgId);
-        if (botBubble) {
-            botBubble.innerText = data.reply;
-        }
-
-    } catch (error) {
-        const botBubble = document.getElementById(botMsgId);
-        if (botBubble) {
-            botBubble.innerText = "Lo siento, hubo un error de conexión.";
-        }
+        const data = await res.json();
+        typeWriter(botId, data.reply);
+    } catch {
+        document.getElementById(botId).innerText = "Error de conexión.";
     }
 }
 
-// Función para añadir mensajes (Crea elementos nuevos siempre)
 function addMessage(text, sender) {
-    const chatMessages = document.getElementById('chat-messages');
-    
-    // Creamos el contenedor del mensaje
+    const box = document.getElementById('chat-messages');
     const div = document.createElement('div');
-    const id = "msg-" + Math.random().toString(36).substr(2, 9); // ID aleatorio único
-    
+    const id = "m-" + Math.random().toString(36).slice(2, 7);
     div.id = id;
     div.className = `message ${sender}`;
     div.innerText = text;
-    
-    chatMessages.appendChild(div);
-    
-    // Scroll automático al último mensaje
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-    
-    return id; // Retornamos el ID para saber cuál editar luego
-    chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+    return id;
 }
 
-function handleKeyPress(e) {
-    if (e.key === 'Enter') sendMessage();
-}
+function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
+
+// Bienvenida automática
+window.onload = () => {
+    setTimeout(() => {
+        const bid = addMessage("...", "bot");
+        typeWriter(bid, "¡Hola! Soy el asistente de Mant-enimiento. ¿Cómo puedo ayudarte hoy?");
+    }, 1500);
+};
